@@ -143,7 +143,7 @@ export default function Profile() {
     axios
       .delete(`http://192.168.0.106:5000/api/deletepost/${postId}`)
       .then((res) => {
-        console.log(res);
+        console.log(res.data._id);
         const deletePost = data.filter((item) => {
           return item._id != res.data._id;
         });
@@ -254,7 +254,7 @@ export default function Profile() {
               </Text>
               <Image
                 source={{ uri: item.image }}
-                style={{ height: 300, resizeMode: "cover" }}
+                style={{ height: 300, resizeMode: "cover", marginTop: 15 }}
               />
 
               <View style={styles.iconsContainer}>
@@ -419,7 +419,7 @@ const styles = StyleSheet.create({
   innerCont: {
     marginTop: 20,
     marginLeft: 20,
-    marginBottom: 20,
+    // marginBottom: 20,
     flexDirection: "row",
     position: "relative",
   },
@@ -427,6 +427,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 10,
   },
+  mainContainer: {},
   profile: {
     // marginLeft: 10,
     width: 40,
@@ -447,5 +448,8 @@ const styles = StyleSheet.create({
     // marginBottom: 20,
     // color: "#eee",
     fontSize: 15,
+  },
+  linkContainer: {
+    marginLeft: 20,
   },
 });

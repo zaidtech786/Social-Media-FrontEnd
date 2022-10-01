@@ -1,27 +1,36 @@
 import React from "react";
-import { createContext, useState } from "react";
-import axios from "axios";
+import { createContext, useState, useReducer, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Reducer } from "./Reducer";
 
 export const AuthContext = React.createContext({});
+export const initialState = {
+  user: null,
+};
 
 export const AuthProvider = ({ children }) => {
+  const [state, dispatch] = useReducer(Reducer, initialState);
   const [userId, setUserId] = useState("");
   const [userInfo, setUserInfo] = useState([]);
 
   const getData = async () => {
-    let userId = await AsyncStorage.getItem("userid");
+    let userId = JSON.parse(await AsyncStorage.getItem("userid"));
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
-    setUserInfo(userData.userName);
-    setUserId(userData._id);
+    setUserInfo(userData);
+    setUserId(userId);
   };
-  getData();
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <AuthContext.Provider
       value={{
-        userId: userId,
-        userInfo: userInfo,
+        userId,
+        userInfo,
+        dispatch,
+        state,
       }}
     >
       {children}

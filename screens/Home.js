@@ -10,22 +10,9 @@ import Main from "./HomeComponents/Main";
 
 export const Apps = () => {
   const navigation = useNavigation();
-  const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState("");
+  const { userInfo } = useContext(AuthContext);
 
-  const retrieveData = async () => {
-    const savedData = await AsyncStorage.getItem("token");
-    const userData = JSON.parse(await AsyncStorage.getItem("user"));
-    console.log("ID: ", userData._id);
-    setUserId(userData._id);
-    console.log("Saved Data is", savedData);
-    console.log("user Data is", userData);
-    setToken(savedData);
-  };
-
-  retrieveData();
-
-  return <>{token ? <Home /> : <Login />}</>;
+  return <>{userInfo ? <Home /> : <Login />}</>;
 };
 
 export default function Home() {

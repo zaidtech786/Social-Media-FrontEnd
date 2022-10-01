@@ -11,8 +11,8 @@ import {
 } from "react-native";
 import React, { useContext, useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import Icons from "react-native-vector-icons/FontAwesome";
 import Eye from "react-native-vector-icons/FontAwesome5";
+import User from "react-native-vector-icons/FontAwesome5";
 import { AuthContext } from "./Context/useContext";
 import axios from "axios";
 import { Apps } from "./Home";
@@ -35,7 +35,7 @@ export default function Login() {
   // const { data } = useContext(AuthContext);
   // const { setUserData } = useContext(AuthContext);
   // const { userData } = useContext(AuthContext);
-  // const { loggedIn } = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
 
   const PostData = async () => {
     setLoading(true);
@@ -53,6 +53,7 @@ export default function Login() {
           AsyncStorage.setItem("user", JSON.stringify(res.data.user));
           AsyncStorage.setItem("token", JSON.stringify(res.data.token));
           AsyncStorage.setItem("userid", JSON.stringify(res.data.user._id));
+          dispatch({ type: "USER", payload: res.data.user });
           navigation.navigate("home");
         } else {
           alert("Please Enter Correct Details");
@@ -76,7 +77,7 @@ export default function Login() {
 
           <View style={styles.inputGroup}>
             <Text style={styles.icon}>
-              <Eye name="user" size={15} color={"black"} />
+              <User name="user" size={15} color={"black"} />
             </Text>
             <TextInput
               style={styles.input}
@@ -88,13 +89,23 @@ export default function Login() {
 
           <Text style={styles.label}>Enter Password</Text>
           <View style={styles.inputGroup}>
-            <TouchableOpacity onPress={() => setShow(true)}>
-              <Eye
-                name={show ? "eye" : "eye-slash"}
-                style={styles.icon}
-                size={15}
-                color={"black"}
-              />
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                right: 20,
+                top: 12,
+                fontWeight: "500",
+              }}
+              onPress={() => setShow(!show)}
+            >
+              <Text>
+                <Eye
+                  name={show ? "eye" : "eye-slash"}
+                  style={styles.icon}
+                  size={20}
+                  color="#000"
+                />
+              </Text>
             </TouchableOpacity>
 
             <TextInput

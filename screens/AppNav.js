@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Login from "./Login";
@@ -10,27 +10,34 @@ import Home from "./Home";
 import News from "./News";
 import UserProfile from "./UserProfile";
 import Notifications from "./Notifications";
+import Main from "./HomeComponents/Main";
+import FindPeople from "./FindPeople";
 import { ActivityIndicator, View } from "react-native";
 import { AuthContext } from "./Context/useContext";
 import { Apps } from "./Home";
 import Upload from "./Upload";
 import EditProfile from "./EditProfile";
+import { App } from "./Home";
 
 const AppNav = () => {
+  const { userId } = useContext(AuthContext);
   const Stack = createNativeStackNavigator();
+
   return (
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName={"home"}
+        initialRouteName="App"
       >
         <Stack.Screen name="home" component={Home} />
+        <Stack.Screen name="login" component={Login} />
+        <Stack.Screen name="main" component={Main} />
         <Stack.Screen name="news" component={News} />
         <Stack.Screen name="userprofile" component={UserProfile} />
         <Stack.Screen name="editprofile" component={EditProfile} />
         <Stack.Screen name="apps" component={Apps} />
         <Stack.Screen name="upload" component={Upload} />
-        <Stack.Screen name="login" component={Login} />
+        <Stack.Screen name="findpeople" component={FindPeople} />
         <Stack.Screen name="notification" component={Notifications} />
         <Stack.Screen name="chat" component={Chats} />
         <Stack.Screen name="profile" component={Profile} />

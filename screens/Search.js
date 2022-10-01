@@ -14,6 +14,7 @@ import { useAsyncStorage } from "@react-native-async-storage/async-storage";
 import Times from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
+import FindPeople from "./FindPeople";
 
 export default function Search() {
   const [search, setSearch] = useState("");
@@ -50,73 +51,75 @@ export default function Search() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.inputGrp}>
-        {search == "" ? (
-          <SearchIcon
-            name="search"
-            size={20}
-            style={{ marginLeft: 10, textAlign: "center", marginTop: 3 }}
-          />
-        ) : (
-          <TouchableOpacity onPress={() => ClearData()}>
-            <Times
-              name="times"
+    <>
+      <View style={styles.container}>
+        <View style={styles.inputGrp}>
+          {search == "" ? (
+            <SearchIcon
+              name="search"
               size={20}
               style={{ marginLeft: 10, textAlign: "center", marginTop: 3 }}
             />
-          </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => ClearData()}>
+              <Times
+                name="times"
+                size={20}
+                style={{ marginLeft: 10, textAlign: "center", marginTop: 3 }}
+              />
+            </TouchableOpacity>
+          )}
+
+          <TextInput
+            placeholder="search"
+            style={styles.search}
+            value={search}
+            onChangeText={(val) => {
+              setSearch(val);
+              console.log(val);
+              getSearchData();
+            }}
+          />
+        </View>
+
+        {search ? (
+          <FlatList
+            data={filterData}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => {
+              console.log(item);
+              return (
+                <View style={styles.userProfile}>
+                  <Image
+                    source={{
+                      uri:
+                        item.profile == ""
+                          ? "http://www.gravatar.com/avatar/?d=mp"
+                          : item.profile,
+                    }}
+                    style={styles.profile}
+                  />
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("userprofile", {
+                        Id: item._id,
+                      })
+                    }
+                  >
+                    <View style={styles.nameUser}>
+                      <Text style={{ fontWeight: "500" }}>{item.userName}</Text>
+                      <Text style={{ fontWeight: "400" }}> {item.name}</Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              );
+            }}
+          />
+        ) : (
+          <FindPeople />
         )}
-
-        <TextInput
-          placeholder="search"
-          style={styles.search}
-          value={search}
-          onChangeText={(val) => {
-            setSearch(val);
-            console.log(val);
-            getSearchData();
-          }}
-        />
       </View>
-
-      {search ? (
-        <FlatList
-          data={filterData}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => {
-            console.log(item);
-            return (
-              <View style={styles.userProfile}>
-                <Image
-                  source={{
-                    uri:
-                      item.profile == ""
-                        ? "http://www.gravatar.com/avatar/?d=mp"
-                        : item.profile,
-                  }}
-                  style={styles.profile}
-                />
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("userprofile", {
-                      Id: item._id,
-                    })
-                  }
-                >
-                  <View style={styles.nameUser}>
-                    <Text style={{ fontWeight: "500" }}>{item.userName}</Text>
-                    <Text style={{ fontWeight: "400" }}> {item.name}</Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            );
-          }}
-        />
-      ) : (
-        <Text></Text>
-      )}
-    </View>
+    </>
   );
 }
 

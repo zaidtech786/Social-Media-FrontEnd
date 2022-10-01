@@ -1,12 +1,14 @@
-import React from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useContext } from "react";
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Logout from "react-native-vector-icons/AntDesign";
 import Chat from "react-native-vector-icons/Ionicons";
 import AddPostIcon from "react-native-vector-icons/Ionicons";
+import { AuthContext } from "./../Context/useContext";
 
 const Navbar = () => {
+  const { dispatch } = useContext(AuthContext);
   const navigation = useNavigation();
   const loggedOut = async () => {
     const clearLs = AsyncStorage.clear();

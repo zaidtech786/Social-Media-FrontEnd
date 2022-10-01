@@ -24,9 +24,8 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "./../Context/useContext";
 import LikeComponent from "../LikeComponent";
 
-const Main = () => {
+const Main = (props) => {
   const [postData, setPostData] = useState([]);
-  const [show, setShow] = useState(false);
   const [openModel, setOpenModel] = useState(false);
   const [comment, setComment] = useState("");
   const [postId, setPostId] = useState("");
@@ -34,9 +33,6 @@ const Main = () => {
   const [commentsCount, setCommentsCount] = useState([]);
   const navigation = useNavigation();
   const { userId } = useContext(AuthContext);
-  const { userInfo } = useContext(AuthContext);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likesCount, setLikesCount] = useState();
 
   const getData = async () => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
@@ -45,6 +41,9 @@ const Main = () => {
       console.log("res : ", res.data.data[0].postedBy.profile);
     });
   };
+  useEffect(() => {
+    getData();
+  }, []);
 
   const likePosts = async (postId) => {
     console.log("Liked post id ", postId);
@@ -68,9 +67,6 @@ const Main = () => {
       })
       .catch((err) => console.log(err));
   };
-  useEffect(() => {
-    getData();
-  }, []);
 
   const unLikePost = async (postId) => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
@@ -119,7 +115,6 @@ const Main = () => {
   };
   return (
     <>
-      <Text>{userId}</Text>
       <FlatList
         data={postData}
         renderItem={({ item, index }) => {
@@ -173,14 +168,6 @@ const Main = () => {
                       </TouchableOpacity>
                     )}
 
-                    {/* {item.likes.includes(userId) ? (
-                      <Text>
-                        You and {item.likes.length - 1} others like this post
-                      </Text>
-                    ) : (
-                      <Text></Text>
-                    )} */}
-
                     <Text>{item.likes.length}like</Text>
                   </View>
                   <View style={styles.commentContainer}>
@@ -233,7 +220,61 @@ const Main = () => {
               onPress={() => setOpenModel(false)}
             />
           </TouchableOpacity>
-          <View style={{ flexDirection: "row", position: "relative" }}>
+
+          <FlatList
+            data={commentsData}
+            key={(item) => item._id}
+            renderItem={({ item }) => {
+              console.log("Render items are Items Are", item);
+              return (
+                <View style={{ flexDirection: "column" }}>
+                  <View style={styles.innerCont}>
+                    <Image
+                      source={{
+                        uri:
+                          item.userId.profile == ""
+                            ? "http://www.gravatar.com/avatar/?d=mp"
+                            : item.userId.profile,
+                      }}
+                      style={{ width: 40, height: 40, borderRadius: 50 }}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 15,
+                        marginLeft: 5,
+                        marginTop: 6,
+                        fontWeight: "500",
+                      }}
+                    >
+                      {item.userId.userName}
+                    </Text>
+                    <Text style={{ marginLeft: 5, marginTop: 6 }}>
+                      {item.comment}
+                    </Text>
+                  </View>
+
+                  <View style={styles.bottomContainer}>
+                    <TouchableOpacity>
+                      <Text style={{ color: "blue" }}>Like</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Text style={{ color: "red", marginHorizontal: 10 }}>
+                        Delete
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              );
+            }}
+          />
+
+          <View
+            style={{
+              flexDirection: "row",
+              position: "relative",
+              marginTop: 580,
+            }}
+          >
             <TextInput
               style={styles.input}
               placeholder="Write Something here..."
@@ -246,31 +287,6 @@ const Main = () => {
               <Send name="send" size={25} onPress={() => commentPost(postId)} />
             </TouchableOpacity>
           </View>
-
-          <FlatList
-            data={commentsData}
-            key={(item) => item._id}
-            renderItem={({ item }) => {
-              console.log("Render items are Items Are", item);
-              return (
-                <View style={styles.innerCont}>
-                  <Image
-                    source={{
-                      uri:
-                        item.userId.profile == ""
-                          ? "http://www.gravatar.com/avatar/?d=mp"
-                          : item.userId.profile,
-                    }}
-                    style={{ width: 25, height: 25, borderRadius: 50 }}
-                  />
-                  <Text style={{ fontSize: 15, marginLeft: 10 }}>
-                    {item.userId.userName}
-                  </Text>
-                  <Text style={{ marginLeft: 40 }}>{item.comment}</Text>
-                </View>
-              );
-            }}
-          />
         </View>
       </Modal>
     </>
@@ -284,6 +300,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   innerCont: {
+    width: "90%",
+    marginTop: 50,
+    // borderColor: "#000",
+    // borderWidth: 1,
+    paddingVertical: 10,
     marginTop: 20,
     marginLeft: 20,
     flexDirection: "row",
@@ -331,5 +352,11 @@ const styles = StyleSheet.create({
     // marginBottom: 20,
     // color: "#eee",
     fontSize: 15,
+  },
+  bottomContainer: {
+    flexDirection: "row",
+    position: "absolute",
+    top: 60,
+    marginLeft: 70,
   },
 });
