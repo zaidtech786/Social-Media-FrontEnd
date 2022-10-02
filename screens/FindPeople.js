@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   FlatList,
+  ScrollView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -32,6 +33,7 @@ const FindPeople = () => {
           numColumns={2}
           style={styles.flatList}
           data={users}
+          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => {
             return (
@@ -39,7 +41,7 @@ const FindPeople = () => {
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
-                  margin: 10,
+                  margin: 5,
                 }}
               >
                 <TouchableOpacity
@@ -57,10 +59,18 @@ const FindPeople = () => {
                             ? "http://www.gravatar.com/avatar/?d=mp"
                             : item.profile,
                       }}
-                      style={{ width: 110, height: 110, borderRadius: 100 }}
+                      style={{
+                        width: 110,
+                        height: 110,
+                        borderRadius: 110 / 2,
+                        aspectRatio: 1,
+                        zIndex: 1,
+                      }}
                     />
                     <View style={styles.boxBody}>
-                      <Text style={{ fontWeight: "600" }}>{item.userName}</Text>
+                      <Text style={{ fontWeight: "600", fontSize: 16 }}>
+                        {item.userName}
+                      </Text>
                       <Text>{item.name}</Text>
                       <TouchableOpacity style={styles.btn}>
                         <Text>Follow</Text>
@@ -81,25 +91,23 @@ export default FindPeople;
 
 const styles = StyleSheet.create({
   boxContainer: {
-    // width: "100%",
-    // borderWidth: 1,
-    // borderColor: "#000",
-    // justifyContent: "center",
     marginTop: 20,
-    marginLeft: 20,
+    justifyContent: "center",
+    alignItems: "center",
   },
   box: {
     borderWidth: 1,
     borderColor: "#000",
-    width: 150,
-    height: 200,
+    width: 165,
+    height: 230,
     borderRadius: 5,
-    padding: 10,
+    // padding: 10,
     justifyContent: "center",
     alignItems: "center",
   },
   boxBody: {
     justifyContent: "center",
+    padding: 10,
     alignItems: "center",
   },
   btn: {

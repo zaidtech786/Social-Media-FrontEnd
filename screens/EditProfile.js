@@ -46,12 +46,6 @@ const EditProfile = ({ route }) => {
   const { name, userName, bio, link } = route.params;
   console.log("name :", name, "userName :", userName);
 
-  // Fill the user input when edit button is clicked
-
-  // useEffect(() => {
-  //   getData();
-  // }, []);
-
   const pickImage = async () => {
     let data = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,

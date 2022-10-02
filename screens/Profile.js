@@ -193,12 +193,16 @@ export default function Profile() {
           </View>
 
           <View style={styles.follwers}>
-            <Text style={{ textAlign: "center", fontWeight: "bold" }}>0 </Text>
-            <Text style={styles.bottomText}>followers</Text>
+            <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+              {userInfo.followers?.length}{" "}
+            </Text>
+            <Text style={styles.bottomText}>Followers</Text>
           </View>
 
           <View style={styles.following}>
-            <Text style={{ textAlign: "center", fontWeight: "bold" }}>0 </Text>
+            <Text style={{ textAlign: "center", fontWeight: "bold" }}>
+              {userInfo.followings?.length}
+            </Text>
             <Text style={styles.bottomText}>followings</Text>
           </View>
         </View>

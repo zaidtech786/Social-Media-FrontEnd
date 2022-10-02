@@ -26,15 +26,14 @@ const Upload = () => {
       aspect: [1, 1],
       quality: 0.5,
     });
-    // console.log("Data from PickImage Func :", data.uri);
+
     if (!data.cancelled) {
-      const base64Img = `data:image/jpg;base64,${data.uri}`;
-      handleUpload(base64Img);
-      console.log(base64Img);
+      console.log(data);
+      handleUpload(data.uri);
     }
   };
 
-  const handleUpload = (url) => {
+  const handleUpload = async (url) => {
     const data = new FormData();
     data.append("file", url);
     data.append("upload_preset", "Social-Media-App");
@@ -46,8 +45,8 @@ const Upload = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
         setImage(data.url);
+        console.log(data);
       });
   };
 

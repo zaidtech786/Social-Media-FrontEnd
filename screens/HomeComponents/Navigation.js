@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { useNavigation } from "@react-navigation/native";
 import HomeIcon from "react-native-vector-icons/AntDesign";
 import SearchIcon from "react-native-vector-icons/AntDesign";
@@ -19,10 +19,12 @@ import NewsPaper from "react-native-vector-icons/Ionicons";
 import Main from "./Main";
 import Search from "./../Search";
 import Notifications from "./../Notifications";
+import { AuthContext } from "./../Context/useContext";
 
 const Navigation = () => {
   const navigation = useNavigation();
   const [icon, setIcon] = useState("home");
+  const { dispatch } = useContext(AuthContext);
   return (
     <SafeAreaView style={styles.footer}>
       <TouchableOpacity

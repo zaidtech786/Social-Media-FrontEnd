@@ -146,10 +146,11 @@ const Main = (props) => {
                   <View style={styles.likeContainer}>
                     {item.likes.includes(userId) ? (
                       <TouchableOpacity>
-                        <Dislike
-                          name="dislike2"
+                        <Like
+                          name="like"
                           size={30}
                           style={styles.like}
+                          color="blue"
                           onPress={() => {
                             unLikePost(item._id);
                           }}

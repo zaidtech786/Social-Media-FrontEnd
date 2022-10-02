@@ -33,12 +33,20 @@ const UserProfile = ({ route }) => {
   const [comment, setComment] = useState("");
   const [commentsData, setCommentsData] = useState([]);
   const [openModel, setOpenModel] = useState(false);
-  const [load, setLoad] = useState(false);
+  const [followed, setFollowed] = useState(false);
   const navigation = useNavigation();
   const [postId, setPostId] = useState("");
   const { userId } = useContext(AuthContext);
+  const { userInfo } = useContext(AuthContext);
 
   const { Id } = route.params;
+
+  // useEffect(() => {
+  //   if (userInfo.followings.includes(Id)) {
+  //     setFollowed(true);
+  //   }
+  //   setFollowed(false);
+  // }, [userInfo, Id]);
 
   const getData = () => {
     axios
@@ -132,152 +140,235 @@ const UserProfile = ({ route }) => {
       });
   };
 
+  const followUser = async (Id) => {
+    console.log("Folow Id ", Id);
+    let userData = JSON.parse(await AsyncStorage.getItem("user"));
+
+    axios
+      .put(`http://192.168.0.106:5000/api/follow/${Id}`, {
+        userId: userData._id,
+      })
+      .then((res) => {
+        console.log("Response getting from Follow", res);
+      });
+    setFollowed(!followed);
+  };
+
+  const unFollowUser = async (Id) => {
+    console.log("Folow Id ", Id);
+    let userData = JSON.parse(await AsyncStorage.getItem("user"));
+
+    axios
+      .put(`http://192.168.0.106:5000/api/unfollow/${Id}`, {
+        userId: userData._id,
+      })
+      .then((res) => {
+        console.log("Response getting from unFollow", res);
+      });
+    setFollowed(!followed);
+  };
+
   return (
     <>
-      <View style={styles.header}>
-        <Text style={{ fontSize: 20, marginLeft: 15 }}>
-          {userData.userName}
-        </Text>
-        {/* <Text style={{ fontSize: 20, marginLeft: 15 }}>{userId}</Text> */}
-      </View>
-
-      <View style={styles.mainContainer}>
-        <View style={styles.main}>
-          <View style={styles.Profile}>
-            <Image
-              source={{
-                uri:
-                  userData.profile == ""
-                    ? "http://www.gravatar.com/avatar/?d=mp"
-                    : userData.profile,
-              }}
-              style={styles.img}
-            />
-            <Text style={{ textAlign: "center", fontWeight: "600" }}></Text>
-          </View>
-
-          <View style={styles.posts}>
-            <Text style={{ textAlign: "center", fontWeight: "bold" }}>
-              {postData.length == "" ? "0" : postData.length}
-            </Text>
-            <Text style={styles.bottomText}>Posts</Text>
-          </View>
-
-          <View style={styles.follwers}>
-            <Text style={{ textAlign: "center", fontWeight: "bold" }}>0 </Text>
-            <Text style={styles.bottomText}>followers</Text>
-          </View>
-
-          <View style={styles.following}>
-            <Text style={{ textAlign: "center", fontWeight: "bold" }}>0 </Text>
-            <Text style={styles.bottomText}>followings</Text>
-          </View>
+      <View>
+        <View style={{ backgroundColor: "#f1c40f" }}>
+          <Text
+            style={{
+              fontSize: 25,
+              marginLeft: 20,
+              paddingVertical: 20,
+              marginTop: 20,
+            }}
+          >
+            {userData.userName}
+          </Text>
         </View>
-      </View>
 
-      <FlatList
-        data={postData}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => {
-          console.log("item", item);
-          return (
-            <View>
-              <View style={styles.innerCont}>
-                <Image
-                  source={{ uri: "http://www.gravatar.com/avatar/?d=mp" }}
-                  style={styles.profile}
-                />
-                <Text style={styles.name}>{item.postedBy.userName}</Text>
-                <TouchableOpacity
-                  style={styles.name}
-                  onPress={() => deletePost(item._id)}
-                >
-                  <Delete name="delete" size={25} />
-                </TouchableOpacity>
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 20,
+            marginLeft: 20,
+            // justifyContent: "space-between",
+          }}
+        >
+          <View>
+            <Image
+              source={{ uri: userData.profile }}
+              style={{
+                width: 110,
+                height: 110,
+                borderRadius: 110 / 2,
+                aspectRatio: 1,
+                zIndex: 1,
+              }}
+            />
+            <Text
+              style={{
+                fontWeight: "500",
+                marginTop: 10,
+                textAlign: "center",
+                fontSize: 15,
+              }}
+            >
+              {userData.name}
+            </Text>
+          </View>
+
+          <View>
+            <View
+              style={{
+                flexDirection: "row",
+                marginTop: 10,
+                marginLeft: 15,
+                padding: 10,
+              }}
+            >
+              <View style={{ marginRight: 15 }}>
+                <Text style={{ textAlign: "center", fontWeight: "800" }}>
+                  0
+                </Text>
+                <Text style={{ fontWeight: "400" }}>Posts</Text>
               </View>
-              <Text style={{ marginLeft: 60, position: "absolute", top: 45 }}>
-                23 sept 2022
-              </Text>
-              <Image
-                source={{ uri: item.image }}
-                style={{ height: 300, resizeMode: "cover", marginTop: 15 }}
-              />
 
-              <View style={styles.iconsContainer}>
-                <View style={styles.likeContainer}>
-                  {item.likes.includes(userId) ? (
-                    <TouchableOpacity>
-                      <Dislike
-                        name="dislike2"
-                        size={30}
-                        style={styles.like}
-                        onPress={() => {
-                          unLikePost(item._id);
-                        }}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity>
-                      <Like
-                        name="like"
-                        size={30}
-                        style={styles.like}
-                        onPress={() => {
-                          likePosts(item._id);
-                        }}
-                      />
-                    </TouchableOpacity>
-                  )}
-                  <Text style={{ fontWeight: "600" }}>
-                    {item.likes.length}like
-                  </Text>
-                </View>
+              <View style={{ marginRight: 15 }}>
+                <Text style={{ textAlign: "center", fontWeight: "800" }}>
+                  {userData.followers?.length}
+                </Text>
+                <Text>followers</Text>
+              </View>
 
-                <View style={styles.commentContainer}>
-                  <Comment
-                    name="comment"
-                    size={40}
-                    style={styles.comment}
-                    onPress={() => {
-                      setPostId(item._id);
-                      getComments(item._id);
-                      setOpenModel(true);
-                    }}
-                  />
-                  <Text style={{ textAlign: "center", fontWeight: "600" }}>
-                    15 comment
-                  </Text>
-                </View>
-
-                <View style={styles.shareContainer}>
-                  <Share name="share" size={30} style={styles.share} />
-                  <Text style={{ fontWeight: "600" }}>35 Share </Text>
-                </View>
+              <View style={{ marginRight: 15 }}>
+                <Text style={{ textAlign: "center", fontWeight: "800" }}>
+                  {userData.followings?.length}
+                </Text>
+                <Text>Followings</Text>
               </View>
             </View>
-          );
-        }}
-      />
-
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          position: "absolute",
-          top: 150,
-          left: 150,
-        }}
-      >
-        <TouchableOpacity
-          onPress={() => setFollow(!follow)}
-          style={follow ? styles.followBtn : styles.unfollowBtn}
-        >
-          <Text style={{ textAlign: "center", fontWeight: "500" }}>
-            {follow ? "Unfollow" : "Follow"}
-          </Text>
-        </TouchableOpacity>
+            {userInfo.followings?.includes(Id) ? (
+              <TouchableOpacity
+                style={styles.unfollowBtn}
+                onPress={() => unFollowUser(Id)}
+              >
+                <Text>Following</Text>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.followBtn}
+                onPress={() => followUser(Id)}
+              >
+                <Text>Follow</Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+        <View
+          style={{
+            marginTop: 20,
+            alignItems: "center",
+            borderTopWidth: 1,
+            marginHorizontal: 20,
+            borderColor: "#000",
+          }}
+        ></View>
       </View>
 
+      {postData.length == 0 ? (
+        <Text
+          style={{
+            textAlign: "center",
+            marginTop: 50,
+            fontWeight: "bold",
+            fontSize: 25,
+          }}
+        >
+          NO POSTS
+        </Text>
+      ) : (
+        <FlatList
+          data={postData}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => {
+            console.log("item", item);
+            return (
+              <View>
+                <View style={styles.innerCont}>
+                  <Image
+                    source={{ uri: "http://www.gravatar.com/avatar/?d=mp" }}
+                    style={styles.profile}
+                  />
+                  <Text style={styles.name}>{item.postedBy.userName}</Text>
+                  <TouchableOpacity
+                    style={styles.name}
+                    onPress={() => deletePost(item._id)}
+                  >
+                    <Delete name="delete" size={25} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={{ marginLeft: 60, position: "absolute", top: 45 }}>
+                  23 sept 2022
+                </Text>
+                <Image
+                  source={{ uri: item.image }}
+                  style={{ height: 300, resizeMode: "cover", marginTop: 15 }}
+                />
+
+                <View style={styles.iconsContainer}>
+                  <View style={styles.likeContainer}>
+                    {item.likes.includes(userId) ? (
+                      <TouchableOpacity>
+                        <Dislike
+                          name="dislike2"
+                          size={30}
+                          style={styles.like}
+                          onPress={() => {
+                            unLikePost(item._id);
+                          }}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity>
+                        <Like
+                          name="like"
+                          size={30}
+                          style={styles.like}
+                          onPress={() => {
+                            likePosts(item._id);
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    <Text style={{ fontWeight: "600" }}>
+                      {item.likes.length}like
+                    </Text>
+                  </View>
+
+                  <View style={styles.commentContainer}>
+                    <Comment
+                      name="comment"
+                      size={40}
+                      style={styles.comment}
+                      onPress={() => {
+                        setPostId(item._id);
+                        getComments(item._id);
+                        setOpenModel(true);
+                      }}
+                    />
+                    <Text style={{ textAlign: "center", fontWeight: "600" }}>
+                      15 comment
+                    </Text>
+                  </View>
+
+                  <View style={styles.shareContainer}>
+                    <Share name="share" size={30} style={styles.share} />
+                    <Text style={{ fontWeight: "600" }}>35 Share </Text>
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+        />
+      )}
       {/* Modal for Comments */}
       <Modal visible={openModel} animationType="slide">
         <View>
@@ -401,20 +492,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-around",
     alignItems: "center",
   },
-  followBtn: {
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 80,
-    backgroundColor: "transparent",
-    borderRadius: 10,
-  },
-  unfollowBtn: {
-    borderWidth: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 80,
-    backgroundColor: "#3498db",
-    borderRadius: 10,
-  },
   input: {
     width: "90%",
     borderWidth: 1,
@@ -432,5 +509,26 @@ const styles = StyleSheet.create({
     // marginBottom: 20,
     flexDirection: "row",
     position: "relative",
+  },
+  followBtn: {
+    alignSelf: "center",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 200,
+    height: 30,
+    backgroundColor: "#3498db",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 7,
+  },
+  unfollowBtn: {
+    justifyContent: "center",
+    alignItems: "center",
+    width: 200,
+    height: 30,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "#000",
+    borderRadius: 7,
   },
 });

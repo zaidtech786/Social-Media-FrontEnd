@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Text } from "react-native";
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "./Context/useContext";
 import { useNavigation } from "@react-navigation/native";
@@ -7,6 +7,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import Navbar from "./HomeComponents/Navbar";
 import Navigation from "./HomeComponents/Navigation";
 import Main from "./HomeComponents/Main";
+import Search from "./Search";
+import Upload from "./Upload";
+import Profile from "./Profile";
 
 export const Apps = () => {
   const navigation = useNavigation();

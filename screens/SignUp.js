@@ -42,7 +42,7 @@ export default function SignUp() {
         /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
         "Password must be strong"
       ),
-    conPassword: Yup.string()
+    confirmPassword: Yup.string()
       .min(8)
       .oneOf([Yup.ref("password")], "Your Password do not match.")
       .required("Confirm password is required"),
@@ -75,24 +75,25 @@ export default function SignUp() {
   };
 
   const PostData = () => {
+    console.log(username, name, email, password, confirmPassword, profile);
     setLoading(true);
-    axios
-      .post("http://192.168.0.106:5000/api/signup", {
-        username,
-        name,
-        email,
-        password,
-        confirmPassword,
-        profile,
-      })
-      .then((res) => {
-        console.log(res);
-        // alert(res.data.message);
-        navigation.navigate("login");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // axios
+    //   .post("http://192.168.0.106:5000/api/signup", {
+    //     username,
+    //     name,
+    //     email,
+    //     password,
+    //     confirmPassword,
+    //     profile,
+    //   })
+    //   .then((res) => {
+    //     console.log(res);
+    //     // alert(res.data.message);
+    //     navigation.navigate("login");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
     setLoading(false);
   };
 
@@ -104,12 +105,11 @@ export default function SignUp() {
 
           <Formik
             initialValues={{
-              username: "",
-              name: "",
-              email: "",
-              password: "",
-              confirmPassword: "",
-              profile: "",
+              username: username,
+              name: name,
+              email: email,
+              password: password,
+              confirmPassword: confirmPassword,
             }}
             validationSchema={SignupSchema}
           >
@@ -344,6 +344,7 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     marginHorizontal: 30,
+    color: "#000",
   },
   input: {
     borderWidth: 1,
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     paddingHorizontal: 10,
     // marginBottom: 20,
-    color: "#000",
+    color: "black",
     fontSize: 15,
   },
   label: {
@@ -384,6 +385,7 @@ const styles = StyleSheet.create({
   inputGroup: {
     position: "relative",
     marginBottom: 10,
+    color: "#000",
   },
   icon: {
     position: "absolute",

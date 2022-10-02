@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState);
   const [userId, setUserId] = useState("");
   const [userInfo, setUserInfo] = useState([]);
+  const [icon, setIcon] = useState("search");
 
   const getData = async () => {
     let userId = JSON.parse(await AsyncStorage.getItem("userid"));
@@ -31,6 +32,8 @@ export const AuthProvider = ({ children }) => {
         userInfo,
         dispatch,
         state,
+        icon,
+        setIcon,
       }}
     >
       {children}
