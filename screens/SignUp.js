@@ -16,15 +16,15 @@ import Email from "react-native-vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
-import { Formik } from "formik";
+import { Formik, useFormik } from "formik";
 import * as Yup from "yup";
 
 export default function SignUp() {
-  const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  // const [username, setUsername] = useState("");
+  // const [name, setName] = useState("");
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+  // const [confirmPassword, setConfirmPassword] = useState("");
   const [profile, setProfile] = useState("");
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -74,26 +74,58 @@ export default function SignUp() {
       .then((data) => setProfile(data.url));
   };
 
-  const PostData = () => {
-    console.log(username, name, email, password, confirmPassword, profile);
+  const initialValues = {
+    username: "",
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  };
+
+  const {
+    values,
+    errors,
+    touched,
+    handleSubmit,
+    handleChange,
+    setFieldTouched,
+    isValid,
+  } = useFormik({
+    initialValues: initialValues,
+    validationSchema: SignupSchema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
+  // console.log(Formik);
+
+  const postData = () => {
+    console.log(
+      values.username,
+      values.name,
+      values.email,
+      values.password,
+      values.confirmPassword,
+      profile
+    );
     setLoading(true);
-    // axios
-    //   .post("http://192.168.0.106:5000/api/signup", {
-    //     username,
-    //     name,
-    //     email,
-    //     password,
-    //     confirmPassword,
-    //     profile,
-    //   })
-    //   .then((res) => {
-    //     console.log(res);
-    //     // alert(res.data.message);
-    //     navigation.navigate("login");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
+    axios
+      .post("http://192.168.0.106:5000/api/signup", {
+        username: values.username,
+        name: values.name,
+        email: values.email,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        profile,
+      })
+      .then((res) => {
+        console.log(res);
+        alert("SignUp Successfully");
+        navigation.navigate("login");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     setLoading(false);
   };
 
@@ -102,210 +134,193 @@ export default function SignUp() {
       <View style={styles.Wrapper}>
         <View style={styles.container}>
           <Text style={styles.logo}>Chattify</Text>
-
-          <Formik
-            initialValues={{
-              username: username,
-              name: name,
-              email: email,
-              password: password,
-              confirmPassword: confirmPassword,
-            }}
-            validationSchema={SignupSchema}
-          >
-            {({
-              values,
-              errors,
-              touched,
-              handleSubmit,
-              handleChange,
-              setFieldTouched,
-              isValid,
-            }) => (
-              <View style={styles.inputContainer}>
-                <Text style={styles.label}>Enter Username </Text>
-                <View style={styles.inputGroup}>
-                  <Text style={styles.icon}>
-                    <Eye name="user" size={15} color={"black"} />
-                  </Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Username"
-                    value={values.username}
-                    onChangeText={handleChange("username")}
-                    onBlur={() => setFieldTouched("username")}
-                  />
-                  {touched.username && errors.username && (
-                    <Text
-                      style={{
-                        color: "red",
-                        fontWeight: "500",
-                        marginBottom: 5,
-                      }}
-                    >
-                      {"***" + errors.username}
-                    </Text>
-                  )}
-                </View>
-
-                <Text style={styles.label}>Enter Name </Text>
-                <View style={styles.inputGroup}>
-                  <Text style={styles.icon}>
-                    <Eye name="user" size={15} color={"black"} />
-                  </Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="Enter Name"
-                    value={values.name}
-                    onChangeText={handleChange("name")}
-                    onBlur={() => setFieldTouched("name")}
-                  />
-                  {touched.name && errors.name && (
-                    <Text
-                      style={{
-                        color: "red",
-                        fontWeight: "500",
-                        marginBottom: 5,
-                      }}
-                    >
-                      {"***" + errors.name}
-                    </Text>
-                  )}
-                </View>
-
-                <Text>Enter Email</Text>
-                <View style={styles.inputGroup}>
-                  <Text style={styles.icon}>
-                    <Email name="email" size={15} color={"black"} />
-                  </Text>
-                  <TextInput
-                    style={styles.input}
-                    placeholder="xyz@gmail.com"
-                    keyboardType="email-address"
-                    value={values.email}
-                    onChangeText={handleChange("email")}
-                    onBlur={() => setFieldTouched("email")}
-                  />
-                  {touched.email && errors.email && (
-                    <Text
-                      style={{
-                        color: "red",
-                        fontWeight: "500",
-                        marginBottom: 5,
-                      }}
-                    >
-                      {"***" + errors.email}
-                    </Text>
-                  )}
-                </View>
-
-                <Text style={styles.label}>Enter Password</Text>
-                <View style={styles.inputGroup}>
-                  <TouchableOpacity onPress={() => setShow(true)}>
-                    <Eye
-                      name={show ? "eye" : "eye-slash"}
-                      style={styles.icon}
-                      size={15}
-                      color={"black"}
-                    />
-                  </TouchableOpacity>
-
-                  <TextInput
-                    style={styles.input}
-                    secureTextEntry={show ? false : true}
-                    placeholder="Password"
-                    value={values.password}
-                    onChangeText={handleChange("password")}
-                    onBlur={() => setFieldTouched("password")}
-                  />
-                  {touched.password && errors.password && (
-                    <Text
-                      style={{
-                        color: "red",
-                        fontWeight: "500",
-                        marginBottom: 5,
-                      }}
-                    >
-                      {"***" + errors.password}
-                    </Text>
-                  )}
-                </View>
-
-                <Text style={styles.label}>Confirm Password</Text>
-                <View style={styles.inputGroup}>
-                  <TouchableOpacity onPress={() => setShow(true)}>
-                    <Eye
-                      name={show ? "eye" : "eye-slash"}
-                      style={styles.icon}
-                      size={15}
-                      color={"black"}
-                    />
-                  </TouchableOpacity>
-                  <TextInput
-                    style={styles.input}
-                    secureTextEntry={show ? false : true}
-                    placeholder="Confirm Password"
-                    value={values.confirmPassword}
-                    onChangeText={handleChange("confirmPassword")}
-                    onBlur={() => setFieldTouched("confirmPassword")}
-                  />
-                  {touched.confirmPassword && errors.confirmPassword && (
-                    <Text
-                      style={{
-                        color: "red",
-                        fontWeight: "500",
-                        marginBottom: 5,
-                      }}
-                    >
-                      {"***" + errors.confirmPassword}
-                    </Text>
-                  )}
-                </View>
-
-                <View
+          <View style={styles.inputContainer}>
+            <Text style={styles.label}>Enter Username </Text>
+            <View style={styles.inputGroup}>
+              <Text style={styles.icon}>
+                <Eye name="user" size={15} color={"black"} />
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                name="username"
+                value={values.username}
+                onChangeText={handleChange("username")}
+                onBlur={() => setFieldTouched("username")}
+              />
+              {touched.username && errors.username && (
+                <Text
                   style={{
-                    borderWidth: 1,
-                    borderColor: "#000",
-                    paddingVertical: 10,
-                    paddingHorizontal: 10,
-                    borderRadius: 10,
-                    marginBottom: 10,
+                    color: "red",
+                    fontWeight: "500",
+                    marginBottom: 5,
                   }}
                 >
-                  <TouchableOpacity onPress={() => pickImage()}>
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text>Upload Profile Pic</Text>
-                      <Text>
-                        <Camera
-                          name={profile == "" ? "camera" : "checkcircle"}
-                          size={20}
-                        />
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
+                  {"***" + errors.username}
+                </Text>
+              )}
+            </View>
 
-                <TouchableOpacity onPress={() => PostData()} style={styles.btn}>
-                  <Text style={{ alignSelf: "center" }}>
-                    {loading ? (
-                      <View>
-                        <Text>
-                          <ActivityIndicator size="small" color="#000" />
-                        </Text>
-                      </View>
-                    ) : (
-                      <Text style={{ fontWeight: "500" }}>Sign Up</Text>
-                    )}
+            <Text style={styles.label}>Enter Name </Text>
+            <View style={styles.inputGroup}>
+              <Text style={styles.icon}>
+                <Eye name="user" size={15} color={"black"} />
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter Name"
+                name="name"
+                value={values.name}
+                onChangeText={handleChange("name")}
+                onBlur={() => setFieldTouched("name")}
+              />
+              {touched.name && errors.name && (
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "500",
+                    marginBottom: 5,
+                  }}
+                >
+                  {"***" + errors.name}
+                </Text>
+              )}
+            </View>
+
+            <Text>Enter Email</Text>
+            <View style={styles.inputGroup}>
+              <Text style={styles.icon}>
+                <Email name="email" size={15} color={"black"} />
+              </Text>
+              <TextInput
+                style={styles.input}
+                placeholder="xyz@gmail.com"
+                keyboardType="email-address"
+                name="email"
+                value={values.email}
+                onChangeText={handleChange("email")}
+                onBlur={() => setFieldTouched("email")}
+              />
+              {touched.email && errors.email && (
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "500",
+                    marginBottom: 5,
+                  }}
+                >
+                  {"***" + errors.email}
+                </Text>
+              )}
+            </View>
+
+            <Text style={styles.label}>Enter Password</Text>
+            <View style={styles.inputGroup}>
+              <TouchableOpacity onPress={() => setShow(true)}>
+                <Eye
+                  name={show ? "eye" : "eye-slash"}
+                  style={styles.icon}
+                  size={15}
+                  color={"black"}
+                />
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.input}
+                secureTextEntry={show ? false : true}
+                placeholder="Password"
+                name="password"
+                value={values.password}
+                onChangeText={handleChange("password")}
+                onBlur={() => setFieldTouched("password")}
+              />
+              {touched.password && errors.password && (
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "500",
+                    marginBottom: 5,
+                  }}
+                >
+                  {"***" + errors.password}
+                </Text>
+              )}
+            </View>
+
+            <Text style={styles.label}>Confirm Password</Text>
+            <View style={styles.inputGroup}>
+              <TouchableOpacity onPress={() => setShow(true)}>
+                <Eye
+                  name={show ? "eye" : "eye-slash"}
+                  style={styles.icon}
+                  size={15}
+                  color={"black"}
+                />
+              </TouchableOpacity>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={show ? false : true}
+                placeholder="Confirm Password"
+                name="confirmPassword"
+                value={values.confirmPassword}
+                onChangeText={handleChange("confirmPassword")}
+                onBlur={() => setFieldTouched("confirmPassword")}
+              />
+              {touched.confirmPassword && errors.confirmPassword && (
+                <Text
+                  style={{
+                    color: "red",
+                    fontWeight: "500",
+                    marginBottom: 5,
+                  }}
+                >
+                  {"***" + errors.confirmPassword}
+                </Text>
+              )}
+            </View>
+
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: "#000",
+                paddingVertical: 10,
+                paddingHorizontal: 10,
+                borderRadius: 10,
+                marginBottom: 10,
+              }}
+            >
+              <TouchableOpacity onPress={() => pickImage()}>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Text>Upload Profile Pic</Text>
+                  <Text>
+                    <Camera
+                      name={profile == "" ? "camera" : "checkcircle"}
+                      size={20}
+                    />
                   </Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </Formik>
+                </View>
+              </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity onPress={() => postData()} style={styles.btn}>
+              <Text style={{ alignSelf: "center" }}>
+                {loading ? (
+                  <View>
+                    <Text>
+                      <ActivityIndicator size="small" color="#000" />
+                    </Text>
+                  </View>
+                ) : (
+                  <Text style={{ fontWeight: "500" }}>Sign Up</Text>
+                )}
+              </Text>
+            </TouchableOpacity>
+          </View>
 
           <View style={styles.lastContainer}>
             <Text style={styles.signup}>

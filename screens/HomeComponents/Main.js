@@ -226,7 +226,7 @@ const Main = (props) => {
             data={commentsData}
             key={(item) => item._id}
             renderItem={({ item }) => {
-              console.log("Render items are Items Are", item);
+              console.log("Render items ", item);
               return (
                 <View style={{ flexDirection: "column" }}>
                   <View style={styles.innerCont}>

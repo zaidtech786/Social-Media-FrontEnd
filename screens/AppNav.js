@@ -12,12 +12,13 @@ import UserProfile from "./UserProfile";
 import Notifications from "./Notifications";
 import Main from "./HomeComponents/Main";
 import FindPeople from "./FindPeople";
+import Message from "./Message";
 import { ActivityIndicator, View } from "react-native";
 import { AuthContext } from "./Context/useContext";
 import { Apps } from "./Home";
 import Upload from "./Upload";
 import EditProfile from "./EditProfile";
-import { App } from "./Home";
+// import { Apps } from "./Home";
 
 const AppNav = () => {
   const { userId } = useContext(AuthContext);
@@ -27,15 +28,16 @@ const AppNav = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName="App"
+        initialRouteName="apps"
       >
+        <Stack.Screen name="apps" component={Apps} />
         <Stack.Screen name="home" component={Home} />
         <Stack.Screen name="login" component={Login} />
         <Stack.Screen name="main" component={Main} />
         <Stack.Screen name="news" component={News} />
         <Stack.Screen name="userprofile" component={UserProfile} />
         <Stack.Screen name="editprofile" component={EditProfile} />
-        <Stack.Screen name="apps" component={Apps} />
+        {/* <Stack.Screen name="apps" component={Apps} /> */}
         <Stack.Screen name="upload" component={Upload} />
         <Stack.Screen name="findpeople" component={FindPeople} />
         <Stack.Screen name="notification" component={Notifications} />
@@ -43,6 +45,7 @@ const AppNav = () => {
         <Stack.Screen name="profile" component={Profile} />
         <Stack.Screen name="search" component={Search} />
         <Stack.Screen name="signup" component={SignUp} />
+        <Stack.Screen name="message" component={Message} />
       </Stack.Navigator>
     </NavigationContainer>
   );

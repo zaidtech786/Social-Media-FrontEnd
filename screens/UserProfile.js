@@ -71,6 +71,7 @@ const UserProfile = ({ route }) => {
   };
 
   useEffect(() => {
+    console.log("userInfo", userInfo);
     getData();
   }, []);
 
@@ -136,37 +137,44 @@ const UserProfile = ({ route }) => {
     axios
       .get(`http://192.168.0.106:5000/api/getcomments/${postId}`)
       .then((res) => {
-        setCommentsData(res.data.comment);
+        let comments = res.data.comment;
+        setCommentsData((prevState) => {
+          return {
+            ...prevState,
+            comments,
+          };
+        });
       });
   };
 
-  const followUser = async (Id) => {
-    console.log("Folow Id ", Id);
-    let userData = JSON.parse(await AsyncStorage.getItem("user"));
+  // const followUser = async (Id) => {
+  //   console.log("Folow Id ", Id);
+  //   let userData = JSON.parse(await AsyncStorage.getItem("user"));
 
-    axios
-      .put(`http://192.168.0.106:5000/api/follow/${Id}`, {
-        userId: userData._id,
-      })
-      .then((res) => {
-        console.log("Response getting from Follow", res);
-      });
-    setFollowed(!followed);
-  };
+  //   axios
+  //     .put(`http://192.168.0.106:5000/api/follow/${Id}`, {
+  //       userId: userData._id,
+  //     })
+  //     .then((res) => {
+  //       userInfo.followings.map((elm) => {
+  //         console.log(elm);
+  //       });
 
-  const unFollowUser = async (Id) => {
-    console.log("Folow Id ", Id);
-    let userData = JSON.parse(await AsyncStorage.getItem("user"));
+  //       console.log("Response getting from Follow", res);
+  //     });
+  // };
 
-    axios
-      .put(`http://192.168.0.106:5000/api/unfollow/${Id}`, {
-        userId: userData._id,
-      })
-      .then((res) => {
-        console.log("Response getting from unFollow", res);
-      });
-    setFollowed(!followed);
-  };
+  // const unFollowUser = async (Id) => {
+  //   console.log("Folow Id ", Id);
+  //   let userData = JSON.parse(await AsyncStorage.getItem("user"));
+  //   axios
+  //     .put(`http://192.168.0.106:5000/api/unfollow/${Id}`, {
+  //       userId: userData._id,
+  //     })
+  //     .then((res) => {
+  //       console.log("Response getting from unFollow", res);
+  //     });
+  // };
 
   return (
     <>
@@ -245,7 +253,7 @@ const UserProfile = ({ route }) => {
                 <Text>Followings</Text>
               </View>
             </View>
-            {userInfo.followings?.includes(Id) ? (
+            {/* {userInfo.followings?.includes(Id) ? (
               <TouchableOpacity
                 style={styles.unfollowBtn}
                 onPress={() => unFollowUser(Id)}
@@ -253,13 +261,21 @@ const UserProfile = ({ route }) => {
                 <Text>Following</Text>
               </TouchableOpacity>
             ) : (
+              // console.log("true")
               <TouchableOpacity
                 style={styles.followBtn}
                 onPress={() => followUser(Id)}
               >
                 <Text>Follow</Text>
               </TouchableOpacity>
-            )}
+            )} */}
+
+            <TouchableOpacity
+              style={follow ? styles.unfollowBtn : styles.followBtn}
+              onPress={() => setFollow(!follow)}
+            >
+              <Text>{follow ? "Following" : "Follow"}</Text>
+            </TouchableOpacity>
           </View>
         </View>
         <View

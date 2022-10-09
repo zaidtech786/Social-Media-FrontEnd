@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SearchIcon from "react-native-vector-icons/Feather";
 import AddPostIcon from "react-native-vector-icons/Ionicons";
 import { useAsyncStorage } from "@react-native-async-storage/async-storage";
@@ -15,11 +15,13 @@ import Times from "react-native-vector-icons/FontAwesome";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import FindPeople from "./FindPeople";
+import { AuthContext } from "./Context/useContext";
 
 export default function Search() {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [filterData, setFilterData] = useState([]);
+  const { state } = useContext(AuthContext);
   const navigation = useNavigation();
 
   const getData = async () => {
@@ -47,6 +49,7 @@ export default function Search() {
   };
 
   useEffect(() => {
+    console.log(state);
     getData();
   }, []);
 

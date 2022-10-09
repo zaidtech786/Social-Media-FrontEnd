@@ -6,9 +6,11 @@ import {
   TouchableOpacity,
   FlatList,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+
 import { useNavigation } from "@react-navigation/native";
 
 const FindPeople = () => {
@@ -27,7 +29,7 @@ const FindPeople = () => {
   }, []);
 
   return (
-    <>
+    <View>
       <View style={styles.boxContainer}>
         <FlatList
           numColumns={2}
@@ -37,53 +39,55 @@ const FindPeople = () => {
           keyExtractor={(item) => item._id}
           renderItem={({ item }) => {
             return (
-              <View
-                style={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  margin: 5,
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("userprofile", {
-                      Id: item._id,
-                    })
-                  }
+              <SafeAreaView>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 5,
+                  }}
                 >
-                  <View style={styles.box}>
-                    <Image
-                      source={{
-                        uri:
-                          item.profile == ""
-                            ? "http://www.gravatar.com/avatar/?d=mp"
-                            : item.profile,
-                      }}
-                      style={{
-                        width: 110,
-                        height: 110,
-                        borderRadius: 110 / 2,
-                        aspectRatio: 1,
-                        zIndex: 1,
-                      }}
-                    />
-                    <View style={styles.boxBody}>
-                      <Text style={{ fontWeight: "600", fontSize: 16 }}>
-                        {item.userName}
-                      </Text>
-                      <Text>{item.name}</Text>
-                      <TouchableOpacity style={styles.btn}>
-                        <Text>Follow</Text>
-                      </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("userprofile", {
+                        Id: item._id,
+                      })
+                    }
+                  >
+                    <View style={styles.box}>
+                      <Image
+                        source={{
+                          uri:
+                            item.profile == ""
+                              ? "http://www.gravatar.com/avatar/?d=mp"
+                              : item.profile,
+                        }}
+                        style={{
+                          width: 110,
+                          height: 110,
+                          borderRadius: 110 / 2,
+                          aspectRatio: 1,
+                          zIndex: 1,
+                        }}
+                      />
+                      <View style={styles.boxBody}>
+                        <Text style={{ fontWeight: "600", fontSize: 16 }}>
+                          {item.userName}
+                        </Text>
+                        <Text>{item.name}</Text>
+                        <TouchableOpacity style={styles.btn}>
+                          <Text>Follow</Text>
+                        </TouchableOpacity>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              </View>
+                  </TouchableOpacity>
+                </View>
+              </SafeAreaView>
             );
           }}
         />
       </View>
-    </>
+    </View>
   );
 };
 

@@ -4,15 +4,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Reducer } from "./Reducer";
 
 export const AuthContext = React.createContext({});
-export const initialState = {
-  user: null,
-};
+export const initialState = null;
 
 export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState);
   const [userId, setUserId] = useState("");
   const [userInfo, setUserInfo] = useState([]);
-  const [icon, setIcon] = useState("search");
 
   const getData = async () => {
     let userId = JSON.parse(await AsyncStorage.getItem("userid"));
@@ -22,6 +19,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
+    console.log("State :", state);
     getData();
   }, []);
 
@@ -32,8 +30,6 @@ export const AuthProvider = ({ children }) => {
         userInfo,
         dispatch,
         state,
-        icon,
-        setIcon,
       }}
     >
       {children}
