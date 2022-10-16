@@ -28,8 +28,6 @@ export default function Search() {
     axios.get("http://192.168.0.106:5000/api/allusers").then((res) => {
       setUsers(res.data.data);
       console.log(res.data);
-
-      //  console.log("res : ", res.data.data[0].postedBy.profile);
     });
   };
 
@@ -142,16 +140,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     fontSize: 18,
   },
-  // imageContainer: {
-  //   marginTop: 10,
-  //   flexDirection: "row",
-  //   flex: 1,
-  // },
-  // image: {
-  //   width: 120,
-  //   height: 120,
-  //   resizeMode: "cover",
-  // },
   profile: {
     width: 50,
     height: 50,

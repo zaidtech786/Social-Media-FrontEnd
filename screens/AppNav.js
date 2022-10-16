@@ -18,7 +18,6 @@ import { AuthContext } from "./Context/useContext";
 import { Apps } from "./Home";
 import Upload from "./Upload";
 import EditProfile from "./EditProfile";
-// import { Apps } from "./Home";
 
 const AppNav = () => {
   const { userId } = useContext(AuthContext);
@@ -37,7 +36,6 @@ const AppNav = () => {
         <Stack.Screen name="news" component={News} />
         <Stack.Screen name="userprofile" component={UserProfile} />
         <Stack.Screen name="editprofile" component={EditProfile} />
-        {/* <Stack.Screen name="apps" component={Apps} /> */}
         <Stack.Screen name="upload" component={Upload} />
         <Stack.Screen name="findpeople" component={FindPeople} />
         <Stack.Screen name="notification" component={Notifications} />

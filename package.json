@@ -31,6 +31,8 @@
     "react-native-secure-storage": "^0.1.2",
     "react-native-vector-icons": "^9.2.0",
     "react-native-web": "0.17.7",
+    "socket.io-client": "^4.5.3",
+    "timeago.js": "^4.0.0-beta.3",
     "yup": "^0.32.11"
   },
   "devDependencies": {

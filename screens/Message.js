@@ -1,4 +1,5 @@
 import {
+  Alert,
   FlatList,
   SafeAreaView,
   ScrollView,
@@ -9,67 +10,88 @@ import {
   View,
 } from "react-native";
 import Send from "react-native-vector-icons/FontAwesome";
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect, useRef } from "react";
+import { AuthContext } from "./Context/useContext";
+import Conversation, { getMessages } from "./Conversation";
+import { Route } from "@react-navigation/native";
+import axios from "axios";
+import { format } from "timeago.js";
+import { io } from "socket.io-client";
 
-const Message = () => {
-  const [data, setData] = useState([
-    {
-      id: 1,
-      text: "hello",
-    },
-    {
-      id: 2,
-      text: "Heyy",
-    },
-    {
-      id: 3,
-      text: "WhatsaUpp",
-    },
-    {
-      id: 4,
-      text: "Alhamdulillah",
-    },
-    {
-      id: 5,
-      text: "What about You ? ",
-    },
-    {
-      id: 6,
-      text: "What about You ? ",
-    },
-    {
-      id: 7,
-      text: "What about You ? ",
-    },
-    {
-      id: 8,
-      text: "What about You ? ",
-    },
-    {
-      id: 9,
-      text: "What about You ? ",
-    },
-    {
-      id: 10,
-      text: "What about You ? ",
-    },
-    {
-      id: 11,
-      text: "What about You ? ",
-    },
-    {
-      id: 12,
-      text: "What about You ? ",
-    },
-    {
-      id: 13,
-      text: "What about You ? ",
-    },
-    {
-      id: 14,
-      text: "What about You ? ",
-    },
-  ]);
+const Message = ({ route }) => {
+  const [msg, setMsg] = useState("");
+  const { userId } = useContext(AuthContext);
+  const [user, setUser] = useState([]);
+  const [messages, setMessages] = useState([]);
+  const { conversationId, friendId } = route.params;
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io("ws://localhost:3000");
+
+    socket.current.on("getMessage", (data) => {
+      setArrivalMessage({
+        sender: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
+  }, []);
+
+  // socket.current.emit("sendMessage", {
+  //   senderId: userId,
+  //   receiverId: friendId,
+  //   text: msg,
+  // });
+
+  const getUser = async () => {
+    try {
+      const res = await axios(
+        `http://192.168.0.106:5000/api/profile/${friendId}`
+      );
+      console.log("Response getting from USer", res);
+      setUser(res.data.user);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  const getMessages = async () => {
+    console.log("conversationId", conversationId);
+    try {
+      const res = await axios.get(
+        `http://192.168.0.106:5000/chat/getmessage/${conversationId}`
+      );
+      console.log("Response getting from Messsage", res.data);
+      setMessages(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getUser();
+    getMessages();
+  }, []);
+
+  const sendMsg = () => {
+    if (msg == "") {
+      Alert.alert("Enter Message");
+    } else {
+      axios
+        .post("http://192.168.0.106:5000/chat/postmessage", {
+          senderId: userId,
+          conversationId,
+          text: msg,
+        })
+        .then((res) => {
+          <Conversation msg={msg} />;
+          setMessages([...messages, res.data]);
+          setMsg("");
+        })
+        .catch((err) => console.log(err));
+    }
+  };
+
   return (
     <>
       <View style={{ backgroundColor: "#f1c40f", paddingVertical: 20 }}>
@@ -81,66 +103,67 @@ const Message = () => {
             backgroundColor: "#f1c40f",
           }}
         >
-          Zaid Siddiqi
+          {user.name}
         </Text>
       </View>
 
       <FlatList
-        data={data}
-        keyExtractor={(key) => key.id}
+        data={messages}
+        keyExtractor={(key) => key._id}
         renderItem={({ item }) => {
           return (
             <SafeAreaView>
               <View
-                style={{
-                  justifyContent: "flex-end",
-                  alignItems: "flex-end",
-                  margin: 10,
-                }}
+                style={
+                  userId == item.senderId ? styles.CurrentUser : styles.User
+                }
               >
                 <View style={styles.message}>
                   <Text>{item.text}</Text>
                 </View>
-                <Text style={{ marginRight: 20 }}> 8:30 Am</Text>
+                <Text style={{ marginRight: 20 }}>
+                  {format(item.createdAt)}
+                </Text>
               </View>
             </SafeAreaView>
           );
         }}
       />
 
-      <Textinput />
-    </>
-  );
-};
-
-export const Textinput = () => {
-  return (
-    <View
-      style={{
-        justifyContent: "center",
-        alignItems: "center",
-        marginVertical: 20,
-        position: "relative",
-      }}
-    >
-      <TextInput
-        placeholder="Enter a Mesage"
+      <View
         style={{
-          borderWidth: 1,
-          borderColor: "#000",
-          padding: 7,
-          width: 350,
-          borderRadius: 15,
+          justifyContent: "center",
+          alignItems: "center",
+          marginVertical: 20,
+          position: "relative",
         }}
-      />
-      <View style={{ position: "absolute", marginLeft: 50 }}>
-        <TouchableOpacity>
-          <Text>
-            <Send name="send" size={25} />
-          </Text>
-        </TouchableOpacity>
+      >
+        <TextInput
+          placeholder="Enter a Mesage"
+          value={msg}
+          onChangeText={(val) => setMsg(val)}
+          style={{
+            borderWidth: 1,
+            borderColor: "#000",
+            padding: 7,
+            width: 350,
+            borderRadius: 15,
+          }}
+        />
+        <View
+          style={{
+            position: "absolute",
+            right: 40,
+          }}
+        >
+          <TouchableOpacity onPress={() => sendMsg()}>
+            <Text>
+              <Send name="send" size={25} />
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </>
   );
 };
 
@@ -150,8 +173,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#000",
-    // margin: 10,
     width: 200,
+  },
+  CurrentUser: {
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
+    margin: 10,
+  },
+  User: {
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    margin: 10,
   },
 });
 export default Message;

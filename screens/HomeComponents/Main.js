@@ -98,6 +98,7 @@ const Main = (props) => {
         postId,
       })
       .then((res) => {
+        setCommentsData([...commentsData, res.data]);
         console.log("Comment Response : ", res);
       })
       .catch((err) => console.log(err));
@@ -108,7 +109,6 @@ const Main = (props) => {
       .get(`http://192.168.0.106:5000/api/getcomments/${postId}`)
       .then((res) => {
         console.log(res);
-        // console.log("Length :", res.data.comment.length);
         setCommentsData(res.data.comment);
         setCommentsCount(res.data.comment.length);
       });
@@ -118,8 +118,6 @@ const Main = (props) => {
       <FlatList
         data={postData}
         renderItem={({ item, index }) => {
-          // console.log("Items are :", item);
-          // console.log("Likes :", index, item);
           return (
             <SafeAreaView style={styles.container}>
               <View style={styles.innerCont}>
@@ -232,10 +230,7 @@ const Main = (props) => {
                   <View style={styles.innerCont}>
                     <Image
                       source={{
-                        uri:
-                          item.userId.profile == ""
-                            ? "http://www.gravatar.com/avatar/?d=mp"
-                            : item.userId.profile,
+                        uri: item?.userId?.profile,
                       }}
                       style={{ width: 40, height: 40, borderRadius: 50 }}
                     />
@@ -271,22 +266,36 @@ const Main = (props) => {
 
           <View
             style={{
-              flexDirection: "row",
+              justifyContent: "center",
+              alignItems: "center",
+              marginVertical: 20,
               position: "relative",
-              marginTop: 580,
             }}
           >
             <TextInput
-              style={styles.input}
+              style={{
+                borderWidth: 1,
+                borderColor: "#000",
+                padding: 7,
+                width: 350,
+                borderRadius: 15,
+              }}
               placeholder="Write Something here..."
               value={comment}
               onChangeText={(val) => setComment(val)}
             />
-            <TouchableOpacity
-              style={{ position: "absolute", right: 30, top: 5 }}
+            <View
+              style={{
+                position: "absolute",
+                right: 40,
+              }}
             >
-              <Send name="send" size={25} onPress={() => commentPost(postId)} />
-            </TouchableOpacity>
+              <TouchableOpacity onPress={() => commentPost()}>
+                <Text>
+                  <Send name="send" size={25} />
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </Modal>
