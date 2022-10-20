@@ -196,14 +196,28 @@ export default function Profile() {
             <Text style={{ textAlign: "center", fontWeight: "bold" }}>
               {userInfo.followers?.length}{" "}
             </Text>
-            <Text style={styles.bottomText}>Followers</Text>
+            <Text
+              style={styles.bottomText}
+              onPress={() => {
+                navigation.navigate("followings", {
+                  userId: userInfo._id,
+                });
+              }}
+            >
+              Followers
+            </Text>
           </View>
 
           <View style={styles.following}>
             <Text style={{ textAlign: "center", fontWeight: "bold" }}>
               {userInfo.followings?.length}
             </Text>
-            <Text style={styles.bottomText}>followings</Text>
+            <Text
+              style={styles.bottomText}
+              onPress={() => navigation.navigate("followings")}
+            >
+              followings
+            </Text>
           </View>
         </View>
         <TouchableOpacity
@@ -233,91 +247,114 @@ export default function Profile() {
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item._id}
-        renderItem={({ item }) => {
-          // const { image, like } = item;
-          return (
-            <View>
-              <View style={styles.innerCont}>
-                <Image
-                  source={{ uri: "http://www.gravatar.com/avatar/?d=mp" }}
-                  style={styles.profile}
-                />
-                <Text style={styles.name}>{item.postedBy.userName}</Text>
-                <TouchableOpacity
-                  style={styles.name}
-                  onPress={() => deletePost(item._id)}
-                >
-                  <Delete name="delete" size={25} />
-                </TouchableOpacity>
-              </View>
-              <Text style={{ marginLeft: 60, position: "absolute", top: 45 }}>
-                23 sept 2022
-              </Text>
-              <Image
-                source={{ uri: item.image }}
-                style={{ height: 300, resizeMode: "cover", marginTop: 15 }}
-              />
-
-              <View style={styles.iconsContainer}>
-                <View style={styles.likeContainer}>
-                  {item.likes.includes(userId) ? (
-                    <TouchableOpacity>
-                      <Dislike
-                        name="dislike2"
-                        size={30}
-                        style={styles.like}
-                        onPress={() => {
-                          unLikePost(item._id);
-                        }}
-                      />
-                    </TouchableOpacity>
-                  ) : (
-                    <TouchableOpacity>
-                      <Like
-                        name="like"
-                        size={30}
-                        style={styles.like}
-                        onPress={() => {
-                          likePosts(item._id);
-                        }}
-                      />
-                    </TouchableOpacity>
-                  )}
-                  <Text style={{ fontWeight: "600" }}>
-                    {item.likes.length}like
-                  </Text>
-                </View>
-
-                <View style={styles.commentContainer}>
-                  <TouchableOpacity>
-                    <Comment
-                      name="comment"
-                      size={40}
-                      style={styles.comment}
-                      onPress={() => {
-                        setPostId(item._id);
-                        getComments(item._id);
-                        setOpenModel(true);
-                      }}
-                    />
-                  </TouchableOpacity>
-                  <Text style={{ textAlign: "center", fontWeight: "600" }}>
-                    {commentsCount}comment
-                  </Text>
-                </View>
-
-                <View style={styles.shareContainer}>
-                  <Share name="share" size={30} style={styles.share} />
-                  <Text style={{ fontWeight: "600" }}>0 Share </Text>
-                </View>
-              </View>
-            </View>
-          );
+      <View
+        style={{
+          // marginTop: 20,
+          alignItems: "center",
+          borderTopWidth: 1,
+          marginHorizontal: 20,
+          borderColor: "#000",
         }}
-      />
+      ></View>
+
+      {data.length == 0 ? (
+        <Text
+          style={{
+            textAlign: "center",
+            marginTop: 50,
+            fontWeight: "bold",
+            fontSize: 25,
+          }}
+        >
+          NO POSTS
+        </Text>
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item._id}
+          renderItem={({ item }) => {
+            // const { image, like } = item;
+            return (
+              <View>
+                <View style={styles.innerCont}>
+                  <Image
+                    source={{ uri: "http://www.gravatar.com/avatar/?d=mp" }}
+                    style={styles.profile}
+                  />
+                  <Text style={styles.name}>{item.postedBy.userName}</Text>
+                  <TouchableOpacity
+                    style={styles.name}
+                    onPress={() => deletePost(item._id)}
+                  >
+                    <Delete name="delete" size={25} />
+                  </TouchableOpacity>
+                </View>
+                <Text style={{ marginLeft: 60, position: "absolute", top: 45 }}>
+                  23 sept 2022
+                </Text>
+                <Image
+                  source={{ uri: item.image }}
+                  style={{ height: 300, resizeMode: "cover", marginTop: 15 }}
+                />
+
+                <View style={styles.iconsContainer}>
+                  <View style={styles.likeContainer}>
+                    {item.likes.includes(userId) ? (
+                      <TouchableOpacity>
+                        <Dislike
+                          name="dislike2"
+                          size={30}
+                          style={styles.like}
+                          onPress={() => {
+                            unLikePost(item._id);
+                          }}
+                        />
+                      </TouchableOpacity>
+                    ) : (
+                      <TouchableOpacity>
+                        <Like
+                          name="like"
+                          size={30}
+                          style={styles.like}
+                          onPress={() => {
+                            likePosts(item._id);
+                          }}
+                        />
+                      </TouchableOpacity>
+                    )}
+                    <Text style={{ fontWeight: "600" }}>
+                      {item.likes.length}like
+                    </Text>
+                  </View>
+
+                  <View style={styles.commentContainer}>
+                    <TouchableOpacity>
+                      <Comment
+                        name="comment"
+                        size={40}
+                        style={styles.comment}
+                        onPress={() => {
+                          setPostId(item._id);
+                          getComments(item._id);
+                          setOpenModel(true);
+                        }}
+                      />
+                    </TouchableOpacity>
+                    <Text style={{ textAlign: "center", fontWeight: "600" }}>
+                      {commentsCount}comment
+                    </Text>
+                  </View>
+
+                  <View style={styles.shareContainer}>
+                    <Share name="share" size={30} style={styles.share} />
+                    <Text style={{ fontWeight: "600" }}>0 Share </Text>
+                  </View>
+                </View>
+              </View>
+            );
+          }}
+        />
+      )}
 
       <Modal visible={openModel} animationType="slide">
         <View>

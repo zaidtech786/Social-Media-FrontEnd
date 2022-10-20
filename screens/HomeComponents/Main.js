@@ -24,7 +24,7 @@ import { useNavigation } from "@react-navigation/native";
 import { AuthContext } from "./../Context/useContext";
 import LikeComponent from "../LikeComponent";
 
-const Main = (props) => {
+const Main = () => {
   const [postData, setPostData] = useState([]);
   const [openModel, setOpenModel] = useState(false);
   const [comment, setComment] = useState("");
@@ -89,7 +89,8 @@ const Main = (props) => {
       .catch((err) => console.log(err));
   };
 
-  const commentPost = async (postId) => {
+  const commentPost = async () => {
+    console.log(postId);
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
       .post(`http://192.168.0.106:5000/api/comment`, {
@@ -98,8 +99,9 @@ const Main = (props) => {
         postId,
       })
       .then((res) => {
-        setCommentsData([...commentsData, res.data]);
-        console.log("Comment Response : ", res);
+        setCommentsData([...commentsData, res.data.comment]);
+        setComment("");
+        console.log("Comment Response : ", res.data);
       })
       .catch((err) => console.log(err));
   };
@@ -110,14 +112,24 @@ const Main = (props) => {
       .then((res) => {
         console.log(res);
         setCommentsData(res.data.comment);
-        setCommentsCount(res.data.comment.length);
       });
+  };
+
+  const DeleteComment = (commentId) => {
+    axios
+      .delete(`http://192.168.0.106:5000/api/deletecomment/${commentId}`)
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+    // const newData = commentsData.filter((item) => {
+    //   return item._id !== commentId;
+    // });
+    // setCommentsData(res);
   };
   return (
     <>
       <FlatList
         data={postData}
-        renderItem={({ item, index }) => {
+        renderItem={({ item }) => {
           return (
             <SafeAreaView style={styles.container}>
               <View style={styles.innerCont}>
@@ -182,7 +194,7 @@ const Main = (props) => {
                         }}
                       />
                     </TouchableOpacity>
-                    <Text>{commentsCount}comment</Text>
+                    <Text>comment</Text>
                   </View>
 
                   <View style={styles.shareContainer}>
@@ -210,7 +222,7 @@ const Main = (props) => {
       />
 
       <Modal visible={openModel} animationType="slide">
-        <View>
+        <View style={{ flex: 1 }}>
           <TouchableOpacity>
             <Times
               name="times"
@@ -253,7 +265,7 @@ const Main = (props) => {
                     <TouchableOpacity>
                       <Text style={{ color: "blue" }}>Like</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity>
+                    <TouchableOpacity onPress={() => DeleteComment(item._id)}>
                       <Text style={{ color: "red", marginHorizontal: 10 }}>
                         Delete
                       </Text>

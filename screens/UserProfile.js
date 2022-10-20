@@ -41,13 +41,6 @@ const UserProfile = ({ route }) => {
 
   const { Id } = route.params;
 
-  // useEffect(() => {
-  //   if (userInfo.followings.includes(Id)) {
-  //     setFollowed(true);
-  //   }
-  //   setFollowed(false);
-  // }, [userInfo, Id]);
-
   const getData = () => {
     axios
       .get(`http://192.168.0.106:5000/api/profile/${Id}`)
@@ -147,34 +140,40 @@ const UserProfile = ({ route }) => {
       });
   };
 
-  // const followUser = async (Id) => {
-  //   console.log("Folow Id ", Id);
-  //   let userData = JSON.parse(await AsyncStorage.getItem("user"));
+  const followUser = async (Id) => {
+    console.log("Folow Id ", Id);
+    let userData = JSON.parse(await AsyncStorage.getItem("user"));
 
-  //   axios
-  //     .put(`http://192.168.0.106:5000/api/follow/${Id}`, {
-  //       userId: userData._id,
-  //     })
-  //     .then((res) => {
-  //       userInfo.followings.map((elm) => {
-  //         console.log(elm);
-  //       });
+    axios
+      .put(`http://192.168.0.106:5000/api/follow/${Id}`, {
+        userId: userData._id,
+      })
+      .then((res) => {
+        console.log("Response getting from Follow", res);
+      });
+  };
 
-  //       console.log("Response getting from Follow", res);
-  //     });
-  // };
+  const unFollowUser = async (Id) => {
+    console.log("Folow Id ", Id);
+    let userData = JSON.parse(await AsyncStorage.getItem("user"));
+    axios
+      .put(`http://192.168.0.106:5000/api/unfollow/${Id}`, {
+        userId: userData._id,
+      })
+      .then((res) => {
+        console.log("Response getting from unFollow", res);
+      });
+  };
 
-  // const unFollowUser = async (Id) => {
-  //   console.log("Folow Id ", Id);
-  //   let userData = JSON.parse(await AsyncStorage.getItem("user"));
-  //   axios
-  //     .put(`http://192.168.0.106:5000/api/unfollow/${Id}`, {
-  //       userId: userData._id,
-  //     })
-  //     .then((res) => {
-  //       console.log("Response getting from unFollow", res);
-  //     });
-  // };
+  const sendMessage = () => {
+    axios
+      .post("http://192.168.0.106:5000/chat/postid", {
+        senderId: userId,
+        receiverId: Id,
+      })
+      .then((res) => console.log(res))
+      .catch((Err) => console.log(Err));
+  };
 
   return (
     <>
@@ -253,29 +252,48 @@ const UserProfile = ({ route }) => {
                 <Text>Followings</Text>
               </View>
             </View>
-            {/* {userInfo.followings?.includes(Id) ? (
+            {userData?.followers?.includes(userId) ? (
               <TouchableOpacity
-                style={styles.unfollowBtn}
+                style={styles.followBtn}
                 onPress={() => unFollowUser(Id)}
               >
                 <Text>Following</Text>
               </TouchableOpacity>
             ) : (
-              // console.log("true")
               <TouchableOpacity
                 style={styles.followBtn}
                 onPress={() => followUser(Id)}
               >
                 <Text>Follow</Text>
               </TouchableOpacity>
-            )} */}
-
-            <TouchableOpacity
-              style={follow ? styles.unfollowBtn : styles.followBtn}
-              onPress={() => setFollow(!follow)}
-            >
-              <Text>{follow ? "Following" : "Follow"}</Text>
-            </TouchableOpacity>
+            )}
+            {userData?.followers?.includes(userId) ? (
+              <TouchableOpacity
+                style={{
+                  marginTop: 20,
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  width: 200,
+                  height: 30,
+                  backgroundColor: "transparent",
+                  borderWidth: 1,
+                  borderColor: "#000",
+                  borderRadius: 7,
+                }}
+                onPress={() => sendMessage()}
+              >
+                <Text
+                  style={{
+                    textAlign: "center",
+                  }}
+                >
+                  Message
+                </Text>
+              </TouchableOpacity>
+            ) : (
+              <Text></Text>
+            )}
           </View>
         </View>
         <View
@@ -325,7 +343,12 @@ const UserProfile = ({ route }) => {
                   23 sept 2022
                 </Text>
                 <Image
-                  source={{ uri: item.image }}
+                  source={{
+                    uri:
+                      item.image == ""
+                        ? "http://www.gravatar.com/avatar/?d=mp"
+                        : item.image,
+                  }}
                   style={{ height: 300, resizeMode: "cover", marginTop: 15 }}
                 />
 

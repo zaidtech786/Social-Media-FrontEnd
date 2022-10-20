@@ -18,6 +18,7 @@ import { AuthContext } from "./Context/useContext";
 import { Apps } from "./Home";
 import Upload from "./Upload";
 import EditProfile from "./EditProfile";
+import Followings from "./Followings";
 
 const AppNav = () => {
   const { userId } = useContext(AuthContext);
@@ -44,6 +45,7 @@ const AppNav = () => {
         <Stack.Screen name="search" component={Search} />
         <Stack.Screen name="signup" component={SignUp} />
         <Stack.Screen name="message" component={Message} />
+        <Stack.Screen name="followings" component={Followings} />
       </Stack.Navigator>
     </NavigationContainer>
   );

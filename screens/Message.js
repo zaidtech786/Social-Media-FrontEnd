@@ -26,17 +26,17 @@ const Message = ({ route }) => {
   const { conversationId, friendId } = route.params;
   const socket = useRef();
 
-  useEffect(() => {
-    socket.current = io("ws://localhost:3000");
+  // useEffect(() => {
+  //   socket.current = io("ws://localhost:3000");
 
-    socket.current.on("getMessage", (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
-  }, []);
+  //   socket.current.on("getMessage", (data) => {
+  //     setArrivalMessage({
+  //       sender: data.senderId,
+  //       text: data.text,
+  //       createdAt: Date.now(),
+  //     });
+  //   });
+  // }, []);
 
   // socket.current.emit("sendMessage", {
   //   senderId: userId,

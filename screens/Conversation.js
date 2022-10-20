@@ -15,29 +15,29 @@ const Conversation = ({ conversation, currentUser, msg }) => {
   const [onlineUsers, setOnlineUsers] = useState([]);
   const socket = useRef();
 
-  useEffect(() => {
-    console.log("MSG", msg);
-    socket.current = io("ws://localhost:3000");
-  }, []);
+  // useEffect(() => {
+  //   console.log("MSG", msg);
+  //   socket.current = io("ws://localhost:3000");
+  // }, []);
 
-  useEffect(() => {
-    arrivalMessage &&
-      conversation?.members.includes(arrivalMessage.sender) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
-  }, [arrivalMessage, conversation]);
+  // useEffect(() => {
+  //   arrivalMessage &&
+  //     conversation?.members.includes(arrivalMessage.sender) &&
+  //     setMessages((prev) => [...prev, arrivalMessage]);
+  // }, [arrivalMessage, conversation]);
 
-  useEffect(() => {
-    socket.current.emit("addUser", currentUser);
-    socket.current.on("getUsers", (users) => {
-      setOnlineUsers(
-        userInfo.followings.filter((f) => users.some((u) => u.userId === f))
-      );
-    });
-  }, [userInfo]);
+  // useEffect(() => {
+  //   socket.current.emit("addUser", currentUser);
+  //   socket.current.on("getUsers", (users) => {
+  //     setOnlineUsers(
+  //       userInfo.followings.filter((f) => users.some((u) => u.userId === f))
+  //     );
+  //   });
+  // }, [userInfo]);
 
-  const receiverId = conversation.members.find(
-    (member) => member !== currentUser
-  );
+  // const receiverId = conversation.members.find(
+  //   (member) => member !== currentUser
+  // );
 
   //
 
@@ -48,7 +48,7 @@ const Conversation = ({ conversation, currentUser, msg }) => {
 
     const getUser = async () => {
       try {
-        const res = await axios(
+        const res = await axios.get(
           `http://192.168.0.106:5000/api/profile/${friendId}`
         );
         setUser(res.data.user);
@@ -85,9 +85,9 @@ const Conversation = ({ conversation, currentUser, msg }) => {
           }}
         >
           <View style={{ flexDirection: "row", position: "relative" }}>
-            <Image source={{ uri: user.profile }} style={styles.img} />
+            <Image source={{ uri: user?.profile }} style={styles.img} />
             <Text style={{ marginLeft: 10, fontWeight: "500", fontSize: 20 }}>
-              {user.name}
+              {user?.name}
             </Text>
           </View>
         </TouchableOpacity>

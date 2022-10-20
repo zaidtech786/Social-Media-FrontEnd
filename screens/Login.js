@@ -102,7 +102,7 @@ export default function Login() {
                 <Eye
                   name={show ? "eye" : "eye-slash"}
                   style={styles.icon}
-                  size={20}
+                  size={15}
                   color="#000"
                 />
               </Text>
