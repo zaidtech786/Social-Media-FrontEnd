@@ -31,8 +31,8 @@ const AppNav = () => {
         initialRouteName="apps"
       >
         <Stack.Screen name="apps" component={Apps} />
-        <Stack.Screen name="home" component={Home} />
         <Stack.Screen name="login" component={Login} />
+        <Stack.Screen name="home" component={Home} />
         <Stack.Screen name="main" component={Main} />
         <Stack.Screen name="news" component={News} />
         <Stack.Screen name="userprofile" component={UserProfile} />

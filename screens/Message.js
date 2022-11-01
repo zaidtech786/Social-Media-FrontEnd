@@ -47,7 +47,7 @@ const Message = ({ route }) => {
   const getUser = async () => {
     try {
       const res = await axios(
-        `http://192.168.0.106:5000/api/profile/${friendId}`
+        `http://192.168.0.105:5000/api/profile/${friendId}`
       );
       console.log("Response getting from USer", res);
       setUser(res.data.user);
@@ -59,7 +59,7 @@ const Message = ({ route }) => {
     console.log("conversationId", conversationId);
     try {
       const res = await axios.get(
-        `http://192.168.0.106:5000/chat/getmessage/${conversationId}`
+        `http://192.168.0.105:5000/chat/getmessage/${conversationId}`
       );
       console.log("Response getting from Messsage", res.data);
       setMessages(res.data);
@@ -78,7 +78,7 @@ const Message = ({ route }) => {
       Alert.alert("Enter Message");
     } else {
       axios
-        .post("http://192.168.0.106:5000/chat/postmessage", {
+        .post("http://192.168.0.105:5000/chat/postmessage", {
           senderId: userId,
           conversationId,
           text: msg,
@@ -103,7 +103,7 @@ const Message = ({ route }) => {
             backgroundColor: "#f1c40f",
           }}
         >
-          {user.name}
+          {user?.name}
         </Text>
       </View>
 

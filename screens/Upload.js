@@ -56,7 +56,7 @@ const Upload = () => {
       return Alert.alert("Fill all the credentials");
     }
     axios
-      .post("http://192.168.0.106:5000/api/post", {
+      .post("http://192.168.0.105:5000/api/post", {
         image,
         content,
         postedBy: userData._id,

@@ -110,7 +110,7 @@ export default function SignUp() {
     );
     setLoading(true);
     axios
-      .post("http://192.168.0.106:5000/api/signup", {
+      .post("http://192.168.0.105:5000/api/signup", {
         username: values.username,
         name: values.name,
         email: values.email,

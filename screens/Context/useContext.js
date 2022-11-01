@@ -10,10 +10,12 @@ export const AuthProvider = ({ children }) => {
   const [state, dispatch] = useReducer(Reducer, initialState);
   const [userId, setUserId] = useState("");
   const [userInfo, setUserInfo] = useState([]);
+  const [userFollowing, setUserFollowing] = useState([]);
 
   const getData = async () => {
     let userId = JSON.parse(await AsyncStorage.getItem("userid"));
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
+    setUserFollowing(userData.followings);
     setUserInfo(userData);
     setUserId(userId);
   };
@@ -28,6 +30,8 @@ export const AuthProvider = ({ children }) => {
       value={{
         userId,
         userInfo,
+        userFollowing,
+        setUserFollowing,
         dispatch,
         state,
       }}

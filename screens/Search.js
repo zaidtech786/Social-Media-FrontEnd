@@ -25,7 +25,7 @@ export default function Search() {
   const navigation = useNavigation();
 
   const getData = async () => {
-    axios.get("http://192.168.0.106:5000/api/allusers").then((res) => {
+    axios.get("http://192.168.0.105:5000/api/allusers").then((res) => {
       setUsers(res.data.data);
       console.log(res.data);
     });

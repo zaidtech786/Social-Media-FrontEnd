@@ -47,7 +47,7 @@ export default function Profile() {
 
     // Fetching user data
     axios
-      .get(`http://192.168.0.106:5000/api/profile/${id}`)
+      .get(`http://192.168.0.105:5000/api/profile/${id}`)
       .then((res) => {
         console.log("User Data is : ", res.data.user);
         setUserInfo(res.data.user);
@@ -58,7 +58,7 @@ export default function Profile() {
 
     // fetching post Data
     axios
-      .get(`http://192.168.0.106:5000/api/mypost/${id}`)
+      .get(`http://192.168.0.105:5000/api/mypost/${id}`)
       .then((res) => {
         setData(res.data.data);
         console.log(res.data.data);
@@ -72,7 +72,7 @@ export default function Profile() {
     console.log("Liked post id ", postId);
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .put(`http://192.168.0.106:5000/api/like/${postId}`, {
+      .put(`http://192.168.0.105:5000/api/like/${postId}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -98,7 +98,7 @@ export default function Profile() {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     // console.log(userData);
     axios
-      .put(`http://192.168.0.106:5000/api/unlike/${postId}`, {
+      .put(`http://192.168.0.105:5000/api/unlike/${postId}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -118,7 +118,7 @@ export default function Profile() {
   const commentPost = async (postId) => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .post(`http://192.168.0.106:5000/api/comment`, {
+      .post(`http://192.168.0.105:5000/api/comment`, {
         userId: userData._id,
         comment,
         postId,
@@ -131,7 +131,7 @@ export default function Profile() {
 
   const getComments = async (postId) => {
     axios
-      .get(`http://192.168.0.106:5000/api/getcomments/${postId}`)
+      .get(`http://192.168.0.105:5000/api/getcomments/${postId}`)
       .then((res) => {
         console.log(res);
         // console.log("Length :", res.data.comment.length);
@@ -141,7 +141,7 @@ export default function Profile() {
   };
   const deletePost = async (postId) => {
     axios
-      .delete(`http://192.168.0.106:5000/api/deletepost/${postId}`)
+      .delete(`http://192.168.0.105:5000/api/deletepost/${postId}`)
       .then((res) => {
         console.log(res.data._id);
         const deletePost = data.filter((item) => {
@@ -201,6 +201,7 @@ export default function Profile() {
               onPress={() => {
                 navigation.navigate("followings", {
                   userId: userInfo._id,
+                  name: "followers",
                 });
               }}
             >
@@ -214,7 +215,11 @@ export default function Profile() {
             </Text>
             <Text
               style={styles.bottomText}
-              onPress={() => navigation.navigate("followings")}
+              onPress={() =>
+                navigation.navigate("followings", {
+                  name: "following",
+                })
+              }
             >
               followings
             </Text>

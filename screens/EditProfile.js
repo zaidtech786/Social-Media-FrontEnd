@@ -79,7 +79,7 @@ const EditProfile = ({ route }) => {
     console.log(userNames, names, bios, links);
     const id = JSON.parse(await AsyncStorage.getItem("userid"));
     axios
-      .put(`http://192.168.0.106:5000/api/update/${id}`, {
+      .put(`http://192.168.0.105:5000/api/update/${id}`, {
         userNames,
         names,
         bios,

@@ -19,7 +19,6 @@ import Times from "react-native-vector-icons/FontAwesome";
 import Delete from "react-native-vector-icons/MaterialIcons";
 import ViewPostIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { AuthContext } from "./Context/useContext";
-// import data from "./Data/Data";
 import { Image } from "react-native";
 import { useNavigation, Route, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,7 +26,7 @@ import axios from "axios";
 import React, { useContext, useEffect, useState } from "react";
 
 const UserProfile = ({ route }) => {
-  const [follow, setFollow] = useState(false);
+  const [userFollowers, setUserFollowers] = useState([]);
   const [userData, setUserData] = useState([]);
   const [postData, setPostData] = useState([]);
   const [comment, setComment] = useState("");
@@ -38,14 +37,21 @@ const UserProfile = ({ route }) => {
   const [postId, setPostId] = useState("");
   const { userId } = useContext(AuthContext);
   const { userInfo } = useContext(AuthContext);
+  const { userFollowing, setUserFollowing } = useContext(AuthContext);
 
   const { Id } = route.params;
 
+  useEffect(() => {
+    console.log("userFollowing", userFollowing);
+    console.log(Id);
+  }, [Id]);
+
   const getData = () => {
     axios
-      .get(`http://192.168.0.106:5000/api/profile/${Id}`)
+      .get(`http://192.168.0.105:5000/api/profile/${Id}`)
       .then((res) => {
         setUserData(res.data.user);
+        setUserFollowers(res.data.user?.followers);
         console.log("Response :", res);
       })
       .catch((err) => {
@@ -53,7 +59,7 @@ const UserProfile = ({ route }) => {
       });
 
     axios
-      .get(`http://192.168.0.106:5000/api/mypost/${Id}`)
+      .get(`http://192.168.0.105:5000/api/mypost/${Id}`)
       .then((res) => {
         console.log("Post Response :", res);
         setPostData(res.data.data);
@@ -72,7 +78,7 @@ const UserProfile = ({ route }) => {
     console.log("Liked post id ", postId);
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .put(`http://192.168.0.106:5000/api/like/${postId}`, {
+      .put(`http://192.168.0.105:5000/api/like/${postId}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -95,7 +101,7 @@ const UserProfile = ({ route }) => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     // console.log(userData);
     axios
-      .put(`http://192.168.0.106:5000/api/unlike/${postId}`, {
+      .put(`http://192.168.0.105:5000/api/unlike/${postId}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -115,7 +121,7 @@ const UserProfile = ({ route }) => {
   const commentPost = async (postId) => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .post(`http://192.168.0.106:5000/api/comment`, {
+      .post(`http://192.168.0.105:5000/api/comment`, {
         userId: userData._id,
         comment,
         postId,
@@ -128,7 +134,7 @@ const UserProfile = ({ route }) => {
 
   const getComments = async (postId) => {
     axios
-      .get(`http://192.168.0.106:5000/api/getcomments/${postId}`)
+      .get(`http://192.168.0.105:5000/api/getcomments/${postId}`)
       .then((res) => {
         let comments = res.data.comment;
         setCommentsData((prevState) => {
@@ -145,11 +151,12 @@ const UserProfile = ({ route }) => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
 
     axios
-      .put(`http://192.168.0.106:5000/api/follow/${Id}`, {
+      .put(`http://192.168.0.105:5000/api/follow/${Id}`, {
         userId: userData._id,
       })
       .then((res) => {
-        console.log("Response getting from Follow", res);
+        console.log("Response getting from Follow", res.data);
+        setUserFollowers([...userFollowers, res.data?.user?.followers.length]);
       });
   };
 
@@ -157,7 +164,7 @@ const UserProfile = ({ route }) => {
     console.log("Folow Id ", Id);
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .put(`http://192.168.0.106:5000/api/unfollow/${Id}`, {
+      .put(`http://192.168.0.105:5000/api/unfollow/${Id}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -167,7 +174,7 @@ const UserProfile = ({ route }) => {
 
   const sendMessage = () => {
     axios
-      .post("http://192.168.0.106:5000/chat/postid", {
+      .post("http://192.168.0.105:5000/chat/postid", {
         senderId: userId,
         receiverId: Id,
       })
@@ -187,7 +194,7 @@ const UserProfile = ({ route }) => {
               marginTop: 20,
             }}
           >
-            {userData.userName}
+            {userData?.userName}
           </Text>
         </View>
 
@@ -196,12 +203,15 @@ const UserProfile = ({ route }) => {
             flexDirection: "row",
             marginTop: 20,
             marginLeft: 20,
-            // justifyContent: "space-between",
           }}
         >
           <View>
             <Image
-              source={{ uri: userData.profile }}
+              source={{
+                uri: !userData.profile
+                  ? "http://www.gravatar.com/avatar/?d=mp"
+                  : userData?.profile,
+              }}
               style={{
                 width: 110,
                 height: 110,
@@ -240,7 +250,7 @@ const UserProfile = ({ route }) => {
 
               <View style={{ marginRight: 15 }}>
                 <Text style={{ textAlign: "center", fontWeight: "800" }}>
-                  {userData.followers?.length}
+                  {userFollowers?.length}
                 </Text>
                 <Text>followers</Text>
               </View>
@@ -252,10 +262,12 @@ const UserProfile = ({ route }) => {
                 <Text>Followings</Text>
               </View>
             </View>
-            {userData?.followers?.includes(userId) ? (
+            {userInfo?.followings?.includes(Id) ? (
               <TouchableOpacity
                 style={styles.followBtn}
-                onPress={() => unFollowUser(Id)}
+                onPress={() => {
+                  unFollowUser(Id);
+                }}
               >
                 <Text>Following</Text>
               </TouchableOpacity>
@@ -281,7 +293,12 @@ const UserProfile = ({ route }) => {
                   borderColor: "#000",
                   borderRadius: 7,
                 }}
-                onPress={() => sendMessage()}
+                onPress={() => {
+                  navigation.navigate("message", {
+                    friendId: Id,
+                  });
+                  sendMessage();
+                }}
               >
                 <Text
                   style={{

@@ -27,7 +27,7 @@ export default function Chats() {
     const getConversations = async () => {
       try {
         const res = await axios.get(
-          "http://192.168.0.106:5000/chat/getconversation/" + userId
+          "http://192.168.0.105:5000/chat/getconversation/" + userId
         );
         console.log(res.data);
         setConversations(res.data);
@@ -39,7 +39,7 @@ export default function Chats() {
   }, [userId]);
 
   const getData = async () => {
-    axios.get("http://192.168.0.106:5000/api/allusers").then((res) => {
+    axios.get("http://192.168.0.105:5000/api/allusers").then((res) => {
       setUsers(res.data.data);
       console.log(res.data);
     });

@@ -35,8 +35,8 @@ const Main = () => {
   const { userId } = useContext(AuthContext);
 
   const getData = async () => {
-    let userData = JSON.parse(await AsyncStorage.getItem("user"));
-    axios.get("http://192.168.0.106:5000/api/allpost").then((res) => {
+    // let userData = JSON.parse(await AsyncStorage.getItem("user"));
+    axios.get("http://192.168.0.105:5000/api/allpost").then((res) => {
       setPostData(res.data.data);
       console.log("res : ", res.data.data[0].postedBy.profile);
     });
@@ -49,7 +49,7 @@ const Main = () => {
     console.log("Liked post id ", postId);
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .put(`http://192.168.0.106:5000/api/like/${postId}`, {
+      .put(`http://192.168.0.105:5000/api/like/${postId}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -72,7 +72,7 @@ const Main = () => {
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     // console.log(userData);
     axios
-      .put(`http://192.168.0.106:5000/api/unlike/${postId}`, {
+      .put(`http://192.168.0.105:5000/api/unlike/${postId}`, {
         userId: userData._id,
       })
       .then((res) => {
@@ -93,7 +93,7 @@ const Main = () => {
     console.log(postId);
     let userData = JSON.parse(await AsyncStorage.getItem("user"));
     axios
-      .post(`http://192.168.0.106:5000/api/comment`, {
+      .post(`http://192.168.0.105:5000/api/comment`, {
         userId: userData._id,
         comment,
         postId,
@@ -108,7 +108,7 @@ const Main = () => {
 
   const getComments = async (postId) => {
     axios
-      .get(`http://192.168.0.106:5000/api/getcomments/${postId}`)
+      .get(`http://192.168.0.105:5000/api/getcomments/${postId}`)
       .then((res) => {
         console.log(res);
         setCommentsData(res.data.comment);
@@ -117,7 +117,7 @@ const Main = () => {
 
   const DeleteComment = (commentId) => {
     axios
-      .delete(`http://192.168.0.106:5000/api/deletecomment/${commentId}`)
+      .delete(`http://192.168.0.105:5000/api/deletecomment/${commentId}`)
       .then((res) => console.log(res))
       .catch((err) => console.log(err));
     // const newData = commentsData.filter((item) => {

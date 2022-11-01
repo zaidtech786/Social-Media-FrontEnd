@@ -49,7 +49,7 @@ const Conversation = ({ conversation, currentUser, msg }) => {
     const getUser = async () => {
       try {
         const res = await axios.get(
-          `http://192.168.0.106:5000/api/profile/${friendId}`
+          `http://192.168.0.105:5000/api/profile/${friendId}`
         );
         setUser(res.data.user);
       } catch (err) {
@@ -63,7 +63,7 @@ const Conversation = ({ conversation, currentUser, msg }) => {
     console.log("conversationId", conversationId);
     try {
       const res = await axios.get(
-        `http://192.168.0.106:5000/chat/getmessage/${conversationId}`
+        `http://192.168.0.105:5000/chat/getmessage/${conversationId}`
       );
       console.log(res);
       setMessages(res.data);
@@ -73,7 +73,7 @@ const Conversation = ({ conversation, currentUser, msg }) => {
   };
 
   return (
-    <View>
+    <>
       <View style={styles.chatSection}>
         <TouchableOpacity
           onPress={() => {
@@ -84,29 +84,57 @@ const Conversation = ({ conversation, currentUser, msg }) => {
             getMessages(conversation._id);
           }}
         >
-          <View style={{ flexDirection: "row", position: "relative" }}>
+          <View style={styles.userProfile}>
+            <Image
+              source={{
+                uri: user?.profile,
+              }}
+              style={styles.profile}
+            />
+            <View style={styles.nameUser}>
+              <Text style={{ fontWeight: "400", fontSize: 18 }}>
+                {user?.name}
+              </Text>
+              <Text style={{ fontWeight: "500" }}>{user?.userName}</Text>
+            </View>
+          </View>
+          {/* <View style={{ flexDirection: "row" }}>
             <Image source={{ uri: user?.profile }} style={styles.img} />
             <Text style={{ marginLeft: 10, fontWeight: "500", fontSize: 20 }}>
               {user?.name}
             </Text>
-          </View>
+          </View> */}
         </TouchableOpacity>
       </View>
-    </View>
+    </>
   );
 };
 
 export default Conversation;
 
 const styles = StyleSheet.create({
-  chatSection: {
-    marginTop: 20,
-    marginLeft: 20,
-    // flexDirection:'row',
-  },
+  // chatSection: {
+  //   marginTop: 20,
+  //   marginLeft: 20,
+  // },
   img: {
     width: 50,
     height: 50,
     borderRadius: 50,
+  },
+  userProfile: {
+    marginLeft: 20,
+    marginTop: 20,
+    flexDirection: "row",
+  },
+  nameUser: {
+    marginLeft: 10,
+  },
+  profile: {
+    width: 40,
+    height: 40,
+    borderRadius: 50,
+    borderWidth: 1,
+    borderColor: "#000",
   },
 });

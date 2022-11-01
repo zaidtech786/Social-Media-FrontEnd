@@ -40,7 +40,7 @@ export default function Login() {
   const PostData = async () => {
     setLoading(true);
     axios
-      .post("http://192.168.0.106:5000/api/signin", {
+      .post("http://192.168.0.105:5000/api/signin", {
         userName,
         password,
       })
